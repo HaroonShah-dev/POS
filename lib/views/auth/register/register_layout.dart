@@ -8,7 +8,6 @@ class RegistrationScreen extends StatelessWidget {
 
   static const double _mobileBreakpoint = 600;
   static const double _tabletBreakpoint = 800;
-  static const double _desktopBreakpoint = 1000;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +37,10 @@ class RegistrationScreen extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: light ? Colors.white.withOpacity(0.12) : AppColors.surface,
+            color: light ? Colors.white : AppColors.surface,
             borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
             border: Border.all(
-              color: light ? Colors.white.withOpacity(0.25) : AppColors.border,
+              color: light ? Colors.white : AppColors.border,
               width: 1,
             ),
           ),
@@ -79,7 +78,7 @@ class RegistrationScreen extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black,
             blurRadius: 24,
             offset: const Offset(0, 10),
           ),
@@ -107,11 +106,7 @@ class RegistrationScreen extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withOpacity(0.45),
-                Colors.black.withOpacity(0.25),
-                Colors.black.withOpacity(0.55),
-              ],
+              colors: [Colors.black, Colors.black, Colors.black],
             ),
           ),
         ),
@@ -137,7 +132,7 @@ class RegistrationScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.4,
@@ -186,11 +181,7 @@ class RegistrationScreen extends StatelessWidget {
                 children: [
                   _brandMark(light: true),
                   const Spacer(),
-                  Container(
-                    width: 36,
-                    height: 3,
-                    color: Colors.white.withOpacity(0.55),
-                  ),
+                  Container(width: 36, height: 3, color: Colors.white),
                   const SizedBox(height: AppDimensions.spaceLg),
                   const Text(
                     'Start managing smarter.',
@@ -209,7 +200,7 @@ class RegistrationScreen extends StatelessWidget {
                     'and sales set up in minutes.',
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
-                      color: Colors.white.withOpacity(0.68),
+                      color: Colors.white,
                       fontSize: 15.5,
                       height: 1.6,
                     ),
@@ -234,7 +225,7 @@ class RegistrationScreen extends StatelessWidget {
                     'GENERAL STORE MANAGEMENT SYSTEM',
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
-                      color: Colors.white.withOpacity(0.45),
+                      color: Colors.white,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.5,
@@ -275,13 +266,13 @@ class RegistrationScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white.withOpacity(0.75), size: 17),
+          Icon(icon, color: Colors.white, size: 17),
           const SizedBox(width: AppDimensions.spaceSm),
           Text(
             label,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              color: Colors.white.withOpacity(0.82),
+              color: Colors.white,
               fontSize: 13.5,
               fontWeight: FontWeight.w500,
             ),
@@ -292,6 +283,6 @@ class RegistrationScreen extends StatelessWidget {
   }
 
   Widget _divider() {
-    return Container(height: 1, color: Colors.white.withOpacity(0.1));
+    return Container(height: 1, color: Colors.white);
   }
 }

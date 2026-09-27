@@ -242,7 +242,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: textOnPrimary,
-          disabledBackgroundColor: primary.withOpacity(0.4),
+          disabledBackgroundColor: primary,
           minimumSize: const Size.fromHeight(AppDimensions.buttonHeight),
           textStyle: AppTextStyles.button,
           elevation: 0,

@@ -22,61 +22,61 @@ class _SalesScreenState extends State<SalesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const SalesHeader(),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SalesHeader(),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 7,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ProductSearchBar(
-                          onChanged: (value) {
-                            setState(() {
-                              searchText = value;
-                            });
-                          },
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        SalesCategoryTabs(
-                          selectedCategory: selectedCategory,
-                          onCategorySelected: (category) {
-                            setState(() {
-                              selectedCategory = category;
-                            });
-                          },
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        Expanded(
-                          child: SalesProductGrid(
-                            searchText: searchText,
-                            selectedCategory: selectedCategory,
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ProductSearchBar(
+                            onChanged: (value) {
+                              setState(() => searchText = value);
+                            },
                           ),
-                        ),
-                      ],
+
+                          const SizedBox(height: 16),
+
+                          SalesCategoryTabs(
+                            selectedCategory: selectedCategory,
+                            onCategorySelected: (category) {
+                              setState(() => selectedCategory = category);
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          Expanded(
+                            child: SalesProductGrid(
+                              searchText: searchText,
+                              selectedCategory: selectedCategory,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(width: 20),
+                    const SizedBox(width: 20),
 
-                  const Expanded(flex: 3, child: CurrentSale()),
-                ],
+                    // Cart always stays side-by-side, fixed width,
+                    // completely unaffected by grid column count.
+                    const SizedBox(width: 360, child: CurrentSale()),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

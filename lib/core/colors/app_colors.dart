@@ -67,19 +67,11 @@ class AppColors {
 
   // ---- Shadows ----
   static List<BoxShadow> softShadow = [
-    BoxShadow(
-      color: Colors.black.withOpacity(0.06),
-      blurRadius: 16,
-      offset: const Offset(0, 4),
-    ),
+    BoxShadow(color: Colors.black, blurRadius: 16, offset: const Offset(0, 4)),
   ];
 
   static List<BoxShadow> cardShadow = [
-    BoxShadow(
-      color: Colors.black.withOpacity(0.05),
-      blurRadius: 10,
-      offset: const Offset(0, 2),
-    ),
+    BoxShadow(color: Colors.black, blurRadius: 10, offset: const Offset(0, 2)),
   ];
 }
 
@@ -281,8 +273,9 @@ class AppValidators {
   }
 
   static String? phone(String? value) {
-    if (value == null || value.trim().isEmpty)
+    if (value == null || value.trim().isEmpty) {
       return 'Phone number is required';
+    }
     if (!_phoneRegex.hasMatch(value.trim())) {
       return 'Enter a valid phone number';
     }
@@ -318,8 +311,9 @@ class AppValidators {
 
   /// Validates stock quantity (non-negative integer).
   static String? stockQuantity(String? value) {
-    if (value == null || value.trim().isEmpty)
+    if (value == null || value.trim().isEmpty) {
       return 'Stock quantity is required';
+    }
     final parsed = int.tryParse(value.trim());
     if (parsed == null) return 'Enter a whole number';
     if (parsed < 0) return 'Stock cannot be negative';

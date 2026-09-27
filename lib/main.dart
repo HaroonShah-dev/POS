@@ -5,6 +5,7 @@ import 'package:store_management_system/core/theme/app_theme.dart';
 import 'package:store_management_system/firebase_options.dart';
 import 'package:store_management_system/views/auth/authViewModel/auth_view_model.dart';
 import 'package:store_management_system/views/auth/login/login_screen.dart';
+import 'package:store_management_system/views/dashboard/dashboard_screen.dart';
 import 'package:store_management_system/views/dashboard/dashboard_view_model.dart';
 import 'package:store_management_system/views/products/product_view_model.dart';
 import 'package:store_management_system/views/sales/sales_view_model.dart';
@@ -18,6 +19,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
         ChangeNotifierProvider(create: (_) => DashboardViewModel()),
         ChangeNotifierProvider(create: (_) => ProductViewModel()),
+        ChangeNotifierProvider(create: (_) => SalesViewModel()),
       ],
       child: MyApp(),
     ),

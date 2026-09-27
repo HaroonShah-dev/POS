@@ -17,72 +17,113 @@ class _ProductScreenState extends State<ProductScreen> {
   String selectedCategory = "All Category";
   String selectedFilter = 'All';
   String searchText = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(14),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(28, 28, 28, 40),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(color: AppColors.background),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text('Products', style: AppTextStyles.h1),
-                    Text(
-                      'Manage your store products  ',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CustomButton(),
-              ),
+              // ---------- Header ----------
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    flex: 2,
-                    child: ProductSearchBar(
-                      onChanged: (value) {
-                        setState(() {
-                          searchText = value;
-                        });
-                      },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Products',
+                          style: AppTextStyles.h1,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Manage your store products',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: ProductCategory(
-                      onCategorySelected: (category) {
-                        setState(() {
-                          selectedCategory = category;
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: ProductFilter(
-                      onFilterSelected: (filter) {
-                        setState(() {
-                          selectedFilter = filter;
-                        });
-                      },
-                    ),
-                  ),
+                  const SizedBox(width: 16),
+                  CustomButton(),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 160),
+
+              const SizedBox(height: 24),
+
+              // ---------- Filters panel ----------
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: _panelDecoration(),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isNarrow = constraints.maxWidth < 700;
+
+                    final searchField = ProductSearchBar(
+                      onChanged: (value) {
+                        setState(() => searchText = value);
+                      },
+                    );
+
+                    final categoryField = ProductCategory(
+                      onCategorySelected: (category) {
+                        setState(() => selectedCategory = category);
+                      },
+                    );
+
+                    final filterField = ProductFilter(
+                      onFilterSelected: (filter) {
+                        setState(() => selectedFilter = filter);
+                      },
+                    );
+
+                    if (isNarrow) {
+                      // Stack vertically on narrow screens
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          searchField,
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(child: categoryField),
+                              const SizedBox(width: 12),
+                              Expanded(child: filterField),
+                            ],
+                          ),
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      children: [
+                        Expanded(flex: 2, child: searchField),
+                        const SizedBox(width: 12),
+                        Expanded(child: categoryField),
+                        const SizedBox(width: 12),
+                        Expanded(child: filterField),
+                      ],
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // ---------- Product table panel ----------
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: _panelDecoration(),
                 child: ProductTable(
                   selectedCategory: selectedCategory,
                   selectedFilter: selectedFilter,
@@ -95,4 +136,19 @@ class _ProductScreenState extends State<ProductScreen> {
       ),
     );
   }
+}
+
+BoxDecoration _panelDecoration() {
+  return BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16),
+    border: Border.all(color: AppColors.border),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.03),
+        blurRadius: 16,
+        offset: const Offset(0, 6),
+      ),
+    ],
+  );
 }

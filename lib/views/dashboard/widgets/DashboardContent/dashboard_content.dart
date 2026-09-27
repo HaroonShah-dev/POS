@@ -1,174 +1,231 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:store_management_system/core/colors/app_colors.dart';
+import 'package:store_management_system/views/dashboard/dashboard_view_model.dart';
 import 'package:store_management_system/views/widgets/custom_button.dart';
+import 'package:store_management_system/views/widgets/recent_sales_list.dart';
+import 'package:store_management_system/views/widgets/sales_chart.dart';
 
 import 'dashboard_card.dart';
 
-class DashboardContent extends StatelessWidget {
+class DashboardContent extends StatefulWidget {
   const DashboardContent({super.key});
 
   @override
+  State<DashboardContent> createState() => _DashboardContentState();
+}
+
+class _DashboardContentState extends State<DashboardContent> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DashboardViewModel>().listenToTodaySales();
+      context.read<DashboardViewModel>().listenToRecentSales();
+      context.read<DashboardViewModel>().listenToWeeklySales();
+      context.read<DashboardViewModel>().listenToTotalProuct();
+      context.read<DashboardViewModel>().listenLowProduct();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final sales = context.watch<DashboardViewModel>();
+
     return Container(
       color: AppColors.background,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.fromLTRB(28, 28, 28, 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Page title
-            const Text('Dashboard', style: AppTextStyles.h1),
-
-            const SizedBox(height: 6),
-
-            Text(
-              'Overview of your store',
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-            ),
-
-            const SizedBox(height: 28),
-            CustomButton(),
-            const SizedBox(height: 28),
-            // Summary cards
-            Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: const [
-                DashboardCard(
-                  title: "Today's Sales",
-                  value: 'Rs. 25,500',
-                  subtitle: 'Today',
-                  icon: Icons.payments_outlined,
-                  iconColor: AppColors.success,
-                ),
-
-                DashboardCard(
-                  title: 'Total Orders',
-                  value: '128',
-                  subtitle: 'All orders',
-                  icon: Icons.shopping_cart_outlined,
-                  iconColor: AppColors.primary,
-                ),
-
-                DashboardCard(
-                  title: 'Total Products',
-                  value: '356',
-                  subtitle: 'All products',
-                  icon: Icons.inventory_2_outlined,
-                  iconColor: AppColors.info,
-                ),
-
-                DashboardCard(
-                  title: 'Low Stock',
-                  value: '12',
-                  subtitle: 'Need attention',
-                  icon: Icons.warning_amber_outlined,
-                  iconColor: AppColors.warning,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 32),
-
-            // Sales overview heading
-            const Text(
-              'Sales Overview',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
-              ),
-            ),
-
-            const SizedBox(height: 6),
-
-            Text(
-              'Your sales performance over time',
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Sales chart container
-            Container(
-              height: 280,
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.border),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Sales',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        'Sales chart will come here',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Bottom dashboard sections
+            // ---------- Header ----------
+            // ---------- Header ----------
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Recent sales
                 Expanded(
-                  child: _DashboardSection(
-                    title: 'Recent Sales',
-                    child: Center(
-                      child: Text(
-                        'Recent sales will come here',
-                        style: TextStyle(color: Colors.grey.shade500),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Dashboard',
+                        style: AppTextStyles.h1,
+                        softWrap: false, // 👈 force single line
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Here's what's happening in your store today",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                        ),
+                        maxLines: 8,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
-
-                const SizedBox(width: 20),
-
-                // Low stock
-                Expanded(
-                  child: _DashboardSection(
-                    title: 'Low Stock Products',
-                    child: Center(
-                      child: Text(
-                        'Low stock products will come here',
-                        style: TextStyle(color: Colors.grey.shade500),
-                      ),
-                    ),
-                  ),
-                ),
+                const SizedBox(width: 16),
+                CustomButton(),
               ],
+            ),
+            const SizedBox(height: 32),
+
+            // ---------- Summary cards ----------
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final cardWidth = constraints.maxWidth > 900
+                    ? (constraints.maxWidth - 48) / 4
+                    : constraints.maxWidth > 600
+                    ? (constraints.maxWidth - 16) / 2
+                    : constraints.maxWidth;
+
+                return Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: [
+                    SizedBox(
+                      width: cardWidth,
+                      child: DashboardCard(
+                        title: "Today's Sales",
+                        value: sales.isLoadingTodaySales
+                            ? '—'
+                            : 'Rs. ${sales.todaySalesTotal.toStringAsFixed(0)}',
+                        subtitle: sales.isLoadingTodaySales
+                            ? 'Loading…'
+                            : '${sales.todaySalesCount} orders today',
+                        icon: Icons.payments_rounded,
+                        iconColor: AppColors.success,
+                      ),
+                    ),
+                    SizedBox(
+                      width: cardWidth,
+                      child: const DashboardCard(
+                        title: 'Total Orders',
+                        value: '128',
+                        subtitle: 'All time',
+                        icon: Icons.receipt_long_rounded,
+                        iconColor: AppColors.primary,
+                      ),
+                    ),
+                    SizedBox(
+                      width: cardWidth,
+                      child: DashboardCard(
+                        title: 'Total Products',
+                        value: ' ${sales.totalCountProduct.toStringAsFixed(0)}',
+                        subtitle: 'In catalog',
+                        icon: Icons.inventory_2_rounded,
+                        iconColor: AppColors.info,
+                      ),
+                    ),
+                    SizedBox(
+                      width: cardWidth,
+                      child: DashboardCard(
+                        title: 'Low Stock',
+                        value: ' ${sales.pl}',
+                        subtitle: 'Needs attention',
+                        icon: Icons.warning_rounded,
+                        iconColor: AppColors.warning,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+
+            const SizedBox(height: 36),
+
+            // ---------- Sales overview ----------
+            const _SectionHeading(
+              title: 'Sales Overview',
+              subtitle: 'Your revenue performance over time',
+            ),
+            const SizedBox(height: 16),
+
+            Container(
+              height: 300,
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: _panelDecoration(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Revenue Trend',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'Last 7 days',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Expanded(child: SalesChart()),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // ---------- Bottom sections ----------
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 700;
+                final recent = _DashboardSection(
+                  title: 'Recent Sales',
+                  actionLabel: 'View all',
+                  onAction: () {},
+                  child: const RecentSalesList(),
+                );
+                final lowStock = _DashboardSection(
+                  title: 'Low Stock Products',
+                  actionLabel: 'View all',
+                  onAction: () {},
+                  child: const _EmptyPanelState(
+                    icon: Icons.inventory_outlined,
+                    message: 'Low stock products will appear here',
+                  ),
+                );
+
+                if (isNarrow) {
+                  return Column(
+                    children: [recent, const SizedBox(height: 20), lowStock],
+                  );
+                }
+
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: recent),
+                    const SizedBox(width: 20),
+                    Expanded(child: lowStock),
+                  ],
+                );
+              },
             ),
           ],
         ),
@@ -177,44 +234,132 @@ class DashboardContent extends StatelessWidget {
   }
 }
 
+BoxDecoration _panelDecoration() {
+  return BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16),
+    border: Border.all(color: AppColors.border),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.03),
+        blurRadius: 16,
+        offset: const Offset(0, 6),
+      ),
+    ],
+  );
+}
+
+class _SectionHeading extends StatelessWidget {
+  final String title;
+  final String subtitle;
+
+  const _SectionHeading({required this.title, required this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 19,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+        ),
+      ],
+    );
+  }
+}
+
 class _DashboardSection extends StatelessWidget {
   final String title;
   final Widget child;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
-  const _DashboardSection({required this.title, required this.child});
+  const _DashboardSection({
+    required this.title,
+    required this.child,
+    this.actionLabel,
+    this.onAction,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 260,
+      height: 280,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: _panelDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              if (actionLabel != null)
+                InkWell(
+                  onTap: onAction,
+                  borderRadius: BorderRadius.circular(6),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    child: Text(
+                      actionLabel!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
-
-          const SizedBox(height: 20),
-
+          const SizedBox(height: 16),
+          const Divider(height: 1),
+          const SizedBox(height: 12),
           Expanded(child: child),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyPanelState extends StatelessWidget {
+  final IconData icon;
+  final String message;
+
+  const _EmptyPanelState({required this.icon, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 32, color: Colors.grey.shade300),
+          const SizedBox(height: 10),
+          Text(
+            message,
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+          ),
         ],
       ),
     );

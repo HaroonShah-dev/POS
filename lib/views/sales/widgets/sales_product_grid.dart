@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:store_management_system/models/product_model.dart';
 import 'package:store_management_system/views/products/product_view_model.dart';
+import 'package:store_management_system/views/sales/sales_view_model.dart';
 import 'package:store_management_system/views/sales/widgets/sales_product_card.dart';
 
 class SalesProductGrid extends StatelessWidget {
@@ -15,15 +16,24 @@ class SalesProductGrid extends StatelessWidget {
     required this.selectedCategory,
   });
 
+  int _columnsForWidth(double width) {
+    if (width >= 500) return 3;
+    if (width >= 350) return 2;
+    return 1;
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.read<ProductViewModel>();
 
     return StreamBuilder<QuerySnapshot>(
-      stream: viewmodel.getProduct(),
+      stream: viewmodel.getFilteredProducts(
+        selectedFilter: searchText,
+        selectedCategory: selectedCategory,
+      ),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Text('Something went wrong');
+          return const Text('Something went wrong');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -31,6 +41,8 @@ class SalesProductGrid extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Center(child: Text('No products found'));
         }
+
+        final search = searchText.trim().toLowerCase();
 
         final allProducts = snapshot.data!.docs
             .map(
@@ -40,25 +52,51 @@ class SalesProductGrid extends StatelessWidget {
             )
             .toList();
 
-        return GridView.builder(
-          padding: EdgeInsets.zero,
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 220,
-            mainAxisExtent: 150,
-            crossAxisSpacing: 19,
-            mainAxisSpacing: 19,
-          ),
-          itemCount: allProducts.length,
-          itemBuilder: (context, index) {
-            final product = allProducts[index];
+        final filteredProducts = search.isEmpty
+            ? allProducts
+            : allProducts.where((product) {
+                final name = product.productName.toLowerCase();
+                final category = product.category.toLowerCase();
+                return name.contains(search) || category.contains(search);
+              }).toList();
 
-            return SalesProductCard(
-              name: product.productName,
-              category: product.category,
-              price: product.price,
-              stock: product.stock,
-              onTap: () {
-                context.read<ProductViewModel>().getProduct();
+        if (filteredProducts.isEmpty) {
+          return Center(child: Text('No products match "$searchText"'));
+        }
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            const spacing = 16.0;
+
+            // 👇 explicit breakpoints instead of dividing by a max card width
+            final columns = _columnsForWidth(constraints.maxWidth);
+
+            final cardWidth =
+                (constraints.maxWidth - spacing * (columns - 1)) / columns;
+            final cardHeight = (cardWidth * 0.70).clamp(120.0, 170.0);
+            final aspectRatio = cardWidth / cardHeight;
+
+            return GridView.builder(
+              padding: EdgeInsets.zero,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                childAspectRatio: aspectRatio,
+                crossAxisSpacing: spacing,
+                mainAxisSpacing: spacing,
+              ),
+              itemCount: filteredProducts.length,
+              itemBuilder: (context, index) {
+                final product = filteredProducts[index];
+
+                return SalesProductCard(
+                  name: product.productName,
+                  category: product.category,
+                  price: product.price,
+                  stock: product.stock,
+                  onTap: () {
+                    context.read<SalesViewModel>().addProductToSale(product);
+                  },
+                );
               },
             );
           },
