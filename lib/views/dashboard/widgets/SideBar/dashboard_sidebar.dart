@@ -15,7 +15,7 @@ class DashboardSidebar extends StatelessWidget {
 
     return Container(
       width: 260,
-      color: AppColors.textPrimary,
+      color: AppColors.primary,
       child: SafeArea(
         child: Column(
           children: [
@@ -30,7 +30,7 @@ class DashboardSidebar extends StatelessWidget {
                         height: 44,
                         width: 44,
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
+                          color: AppColors.infoBg,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: Colors.white.withOpacity(0.08),
@@ -38,7 +38,7 @@ class DashboardSidebar extends StatelessWidget {
                         ),
                         child: const Icon(
                           Icons.store_rounded,
-                          color: AppColors.primaryDark,
+                          color: AppColors.secondaryDark,
                           size: 22,
                         ),
                       ),
@@ -51,21 +51,14 @@ class DashboardSidebar extends StatelessWidget {
                               authViewModel.userStoreName ?? 'Store Manager',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
+                              style: AppTextStyles.button,
                             ),
                             const SizedBox(height: 3),
                             Text(
                               authViewModel.userFullName ?? 'User Name',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade400,
-                              ),
+                              style: AppTextStyles.caption,
                             ),
                           ],
                         ),
@@ -76,7 +69,7 @@ class DashboardSidebar extends StatelessWidget {
               },
             ),
 
-            Divider(height: 1, color: Colors.white.withOpacity(0.08)),
+            Divider(height: 1, color: AppColors.primaryDark),
 
             // ---------- Menu ----------
             Expanded(

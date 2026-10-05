@@ -26,18 +26,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final viewModel = context.watch<DashboardViewModel>();
 
-    return Scaffold(
-      body: Row(
-        children: [
-          const DashboardSidebar(),
+    return SafeArea(
+      child: Scaffold(
+        body: Row(
+          children: [
+            const DashboardSidebar(),
 
-          Expanded(
-            child: Container(
-              color: AppColors.accent,
-              child: viewModel.getSelectedScreen(),
+            Expanded(
+              child: Container(
+                color: AppColors.accent,
+                child: viewModel.getSelectedScreen(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

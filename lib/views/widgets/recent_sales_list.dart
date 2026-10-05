@@ -63,10 +63,10 @@ class _RecentSaleTile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 18,
-          backgroundColor: Colors.green.withOpacity(0.1),
-          child: const Icon(
+          backgroundColor: AppColors.success,
+          child: Icon(
             Icons.check_circle_rounded,
-            color: Colors.green,
+            color: AppColors.success,
             size: 18,
           ),
         ),

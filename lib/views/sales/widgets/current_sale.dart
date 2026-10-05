@@ -297,20 +297,44 @@ class CurrentSale extends StatelessWidget {
                                         final printer = PrinterService();
                                         final devices = await printer
                                             .getUsbPrinters();
-                                        if (devices.isNotEmpty) {
+                                        final target = printer.pickThermal(
+                                          devices,
+                                        );
+                                        if (target != null) {
                                           await printer.printSale(
-                                            target: devices.first,
+                                            target: target,
                                             storeName: storeName,
                                             storePhone: storePhone,
                                             items: items,
                                             quantities: quantities,
                                             total: total,
                                           );
-                                        } else {
-                                          debugPrint('No USB printer found');
+                                        } else if (context.mounted) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'Thermal printer nahi mila',
+                                                  ),
+                                                ),
+                                              );
                                         }
                                       } catch (e) {
                                         debugPrint('Print error: $e');
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Print error: $e'),
+                                              backgroundColor:
+                                                  Colors.orange.shade800,
+                                              duration: const Duration(
+                                                seconds: 10,
+                                              ),
+                                            ),
+                                          );
+                                        }
                                       }
                                     }
 

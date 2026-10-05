@@ -54,7 +54,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
               ]
             : [],
       ),
-      child: TextField(
+      child: TextFormField(
         controller: widget.controller,
         focusNode: _focusNode,
         onChanged: widget.onChanged,

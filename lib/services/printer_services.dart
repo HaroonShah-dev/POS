@@ -11,6 +11,41 @@ class PrinterService {
     return await _printer.getPrinters(printerType: PrinterType.usb);
   }
 
+  /// Virtual printers ko chhod kar asli thermal printer chunta hai.
+  Printer? pickThermal(List<Printer> devices) {
+    const virtual = [
+      'onenote',
+      'pdf',
+      'xps',
+      'fax',
+      'anydesk',
+      'send to',
+      'print to',
+    ];
+    const thermalHints = [
+      'pos',
+      'thermal',
+      'receipt',
+      'xprinter',
+      'epson',
+      'tm-',
+      '80',
+    ];
+
+    final real = devices.where((d) {
+      final n = (d.name ?? '').toLowerCase();
+      return !virtual.any(n.contains);
+    }).toList();
+
+    // Pehle naam se thermal dhoondein
+    for (final d in real) {
+      final n = (d.name ?? '').toLowerCase();
+      if (thermalHints.any(n.contains)) return d;
+    }
+    // Warna pehla asli printer
+    return real.isNotEmpty ? real.first : null;
+  }
+
   /// Builds the receipt and sends it to the given printer.
   /// USB is connectionless in this package, so no connect() step is needed.
   Future<void> printSale({

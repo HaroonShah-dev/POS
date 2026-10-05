@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:store_management_system/models/product_model.dart';
+import 'package:store_management_system/models/sales_model.dart';
 import 'package:store_management_system/services/invoice_services.dart';
 
 class SalesViewModel extends ChangeNotifier {
@@ -44,6 +45,23 @@ class SalesViewModel extends ChangeNotifier {
     currentSale.clear();
     quantities.clear();
     notifyListeners();
+  }
+
+  Stream<List<SaleModel>> listenSale() {
+    final user = auth.currentUser;
+    if (user == null) {
+      return Stream.empty();
+    }
+    return firestore
+        .collection('Users')
+        .doc(user.uid)
+        .collection('Sales')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => SaleModel.fromFirestore(doc)).toList(),
+        );
   }
 
   Future<bool> completeSale(BuildContext context) async {

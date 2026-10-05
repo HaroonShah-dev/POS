@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:store_management_system/core/colors/app_colors.dart';
 import 'package:store_management_system/views/dashboard/dashboard_view_model.dart';
+import 'package:store_management_system/views/products/widgets/product_search_bar.dart';
+import 'package:store_management_system/views/sales/saleoverview/sales_over_view.dart';
 import 'package:store_management_system/views/widgets/custom_button.dart';
 import 'package:store_management_system/views/widgets/recent_sales_list.dart';
 import 'package:store_management_system/views/widgets/sales_chart.dart';
@@ -33,14 +35,12 @@ class _DashboardContentState extends State<DashboardContent> {
     final sales = context.watch<DashboardViewModel>();
 
     return Container(
-      color: AppColors.background,
+      color: AppColors.infoBg,
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(28, 28, 28, 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ---------- Header ----------
-            // ---------- Header ----------
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -58,23 +58,22 @@ class _DashboardContentState extends State<DashboardContent> {
                       const SizedBox(height: 4),
                       Text(
                         "Here's what's happening in your store today",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
-                        ),
+                        style: AppTextStyles.caption,
                         maxLines: 8,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      const SizedBox(height: 10),
+                      // ProductSearchBar(),
                     ],
                   ),
                 ),
-                const SizedBox(width: 16),
+                Expanded(child: ProductSearchBar()),
+                SizedBox(width: 16),
                 CustomButton(),
               ],
             ),
             const SizedBox(height: 32),
 
-            // ---------- Summary cards ----------
             LayoutBuilder(
               builder: (context, constraints) {
                 final cardWidth = constraints.maxWidth > 900
@@ -198,7 +197,12 @@ class _DashboardContentState extends State<DashboardContent> {
                 final recent = _DashboardSection(
                   title: 'Recent Sales',
                   actionLabel: 'View all',
-                  onAction: () {},
+                  onAction: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SalesOverview()),
+                    );
+                  },
                   child: const RecentSalesList(),
                 );
                 final lowStock = _DashboardSection(

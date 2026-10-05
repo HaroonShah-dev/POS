@@ -25,7 +25,7 @@ class SidebarItem extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryLight : Colors.transparent,
+            color: isSelected ? AppColors.primaryDark : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
