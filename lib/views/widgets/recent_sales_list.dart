@@ -63,10 +63,10 @@ class _RecentSaleTile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 18,
-          backgroundColor: AppColors.success,
+          backgroundColor: AppColors.primary.withOpacity(0.1),
           child: Icon(
             Icons.check_circle_rounded,
-            color: AppColors.success,
+            color: AppColors.primaryLight,
             size: 18,
           ),
         ),
@@ -84,16 +84,13 @@ class _RecentSaleTile extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 '$itemCount item${itemCount == 1 ? '' : 's'} • Rs. ${total.toStringAsFixed(0)}',
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                style: AppTextStyles.label,
               ),
             ],
           ),
         ),
         const SizedBox(width: 8),
-        Text(
-          timeAgo(createdAt),
-          style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
-        ),
+        Text(timeAgo(createdAt), style: AppTextStyles.label),
       ],
     );
   }

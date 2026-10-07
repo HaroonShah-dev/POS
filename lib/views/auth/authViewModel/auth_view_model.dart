@@ -105,6 +105,7 @@ class AuthViewModel extends ChangeNotifier {
 
       await firestore.collection('Users').doc(user.user!.uid).set({
         'email': emailController.text.trim(),
+        'password': passwordController.text.trim(),
         'fullName': fullName.text.trim(),
         'storeName': storeName.text.trim(),
         'phone': phone.text.trim(),

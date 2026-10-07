@@ -2,13 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:store_management_system/core/colors/app_colors.dart';
 import 'package:store_management_system/models/sales_model.dart';
-import 'package:store_management_system/views/products/widgets/product_search_bar.dart';
 import 'package:store_management_system/views/sales/saleoverview/widgets/sales_card.dart';
 import 'package:store_management_system/views/sales/saleoverview/widgets/sales_state_message.dart';
+import 'package:store_management_system/views/sales/saleoverview/widgets/search_invoice.dart';
 import 'package:store_management_system/views/sales/sales_view_model.dart';
 
-class SalesOverview extends StatelessWidget {
+class SalesOverview extends StatefulWidget {
   const SalesOverview({super.key});
+
+  @override
+  State<SalesOverview> createState() => _SalesOverviewState();
+}
+
+class _SalesOverviewState extends State<SalesOverview> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchText = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<SaleModel> _filterSales(List<SaleModel> sales) {
+    final query = _searchText.trim().toLowerCase();
+    if (query.isEmpty) return sales;
+
+    return sales.where((sale) {
+      final invoiceMatch = sale.invoiceNumber.toLowerCase().contains(query);
+      return invoiceMatch;
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +50,12 @@ class SalesOverview extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 16),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ProductSearchBar(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SearchInvoice(
+              controller: _searchController,
+              onChanged: (value) => setState(() => _searchText = value),
+            ),
           ),
           const SizedBox(height: 16),
           Expanded(
@@ -48,12 +75,21 @@ class SalesOverview extends StatelessWidget {
                   );
                 }
 
-                final sales = snapshot.data ?? [];
+                final allSales = snapshot.data ?? [];
+                final sales = _filterSales(allSales);
 
-                if (sales.isEmpty) {
+                if (allSales.isEmpty) {
                   return SalesStateMessage(
                     icon: Icons.receipt_long_outlined,
                     message: 'No sales yet',
+                    color: Colors.grey.shade400,
+                  );
+                }
+
+                if (sales.isEmpty) {
+                  return SalesStateMessage(
+                    icon: Icons.search_off_rounded,
+                    message: 'No matching invoices found',
                     color: Colors.grey.shade400,
                   );
                 }
@@ -63,8 +99,7 @@ class SalesOverview extends StatelessWidget {
                   itemCount: sales.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
-                    final sale = sales[index];
-                    return SaleCard(sale: sale);
+                    return SaleCard(sale: sales[index]);
                   },
                 );
               },
