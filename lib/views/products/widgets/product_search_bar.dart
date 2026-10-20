@@ -60,7 +60,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
         onChanged: widget.onChanged,
         style: const TextStyle(fontSize: 15, color: AppColors.primaryLight),
         decoration: InputDecoration(
-          hintText: 'Search products by name, code, or category...',
+          hintText: 'Search products by name, id, or category...',
           hintStyle: _isFocused
               ? TextStyle(color: AppColors.textHint, fontSize: 14)
               : TextStyle(color: AppColors.textHint),

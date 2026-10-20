@@ -70,10 +70,14 @@ class LoginScreenLayout extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: light ? Colors.white.withOpacity(0.12) : AppColors.surface,
+            color: light
+                ? Colors.white.withValues(alpha: 0.12)
+                : AppColors.surface,
             borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
             border: Border.all(
-              color: light ? Colors.white.withOpacity(0.25) : AppColors.border,
+              color: light
+                  ? Colors.white.withValues(alpha: 0.25)
+                  : AppColors.border,
               width: 1,
             ),
           ),
@@ -107,7 +111,7 @@ class LoginScreenLayout extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 24,
             offset: const Offset(0, 10),
           ),
@@ -134,9 +138,9 @@ class LoginScreenLayout extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withOpacity(0.45),
-                Colors.black.withOpacity(0.25),
-                Colors.black.withOpacity(0.55),
+                Colors.black.withValues(alpha: 0.45),
+                Colors.black.withValues(alpha: 0.25),
+                Colors.black.withValues(alpha: 0.55),
               ],
             ),
           ),
@@ -151,13 +155,17 @@ class LoginScreenLayout extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          Icon(feature.icon, color: Colors.white.withOpacity(0.75), size: 17),
+          Icon(
+            feature.icon,
+            color: Colors.white.withValues(alpha: 0.75),
+            size: 17,
+          ),
           const SizedBox(width: AppDimensions.spaceSm),
           Text(
             feature.label,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              color: Colors.white.withOpacity(0.82),
+              color: Colors.white.withValues(alpha: 0.82),
               fontSize: 13.5,
               fontWeight: FontWeight.w500,
             ),
@@ -168,7 +176,7 @@ class LoginScreenLayout extends StatelessWidget {
   }
 
   Widget _divider() {
-    return Container(height: 1, color: Colors.white.withOpacity(0.1));
+    return Container(height: 1, color: Colors.white.withValues(alpha: 0.1));
   }
 
   Widget _mobileLayout(BuildContext context) {
@@ -188,7 +196,7 @@ class LoginScreenLayout extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.4,
@@ -239,7 +247,7 @@ class LoginScreenLayout extends StatelessWidget {
                   Container(
                     width: 36,
                     height: 3,
-                    color: Colors.white.withOpacity(0.55),
+                    color: Colors.white.withValues(alpha: 0.55),
                   ),
                   const SizedBox(height: AppDimensions.spaceLg),
                   Text(
@@ -258,7 +266,7 @@ class LoginScreenLayout extends StatelessWidget {
                     subtitle,
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
-                      color: Colors.white.withOpacity(0.68),
+                      color: Colors.white.withValues(alpha: 0.68),
                       fontSize: 15.5,
                       height: 1.6,
                     ),
@@ -275,7 +283,7 @@ class LoginScreenLayout extends StatelessWidget {
                     footerTagline,
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
-                      color: Colors.white.withOpacity(0.45),
+                      color: Colors.white.withValues(alpha: 0.45),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.5,

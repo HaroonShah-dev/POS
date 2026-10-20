@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductModel {
+  final String documentId;
   final String id;
   final String productName;
   final String category;
@@ -8,6 +9,7 @@ class ProductModel {
   final int stock;
 
   ProductModel({
+    required this.documentId,
     required this.id,
     required this.productName,
     required this.category,
@@ -21,7 +23,8 @@ class ProductModel {
     final data = document.data()!;
 
     return ProductModel(
-      id: document.id,
+      documentId: document.id,
+      id: data['id'] is num ? (data['id'] as num).toString() : data['id'] ?? '',
 
       productName: data['productName'] ?? '',
 

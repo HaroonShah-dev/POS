@@ -64,6 +64,38 @@ class SalesViewModel extends ChangeNotifier {
         );
   }
 
+  /// Sales between [start] (inclusive) and [end] (exclusive), newest first.
+  Stream<List<SaleModel>> listenSalesBetween(DateTime start, DateTime end) {
+    final user = auth.currentUser;
+    if (user == null) return const Stream.empty();
+
+    return firestore
+        .collection('Users')
+        .doc(user.uid)
+        .collection('Sales')
+        .where('createdAt', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
+        .where('createdAt', isLessThan: Timestamp.fromDate(end))
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snap) => snap.docs.map((d) => SaleModel.fromFirestore(d)).toList(),
+        );
+  }
+
+  Stream<List<SaleModel>> sales() {
+    final user = auth.currentUser;
+    if (user == null) return const Stream.empty();
+
+    return firestore
+        .collection('Users')
+        .doc(user.uid)
+        .collection('Sales')
+        .snapshots()
+        .map(
+          (snap) => snap.docs.map((d) => SaleModel.fromFirestore(d)).toList(),
+        );
+  }
+
   Future<bool> completeSale(BuildContext context) async {
     final user = auth.currentUser;
     if (user == null || currentSale.isEmpty) return false;
@@ -100,7 +132,7 @@ class SalesViewModel extends ChangeNotifier {
             .collection('Users')
             .doc(user.uid)
             .collection('Product')
-            .doc(product.id)
+            .doc(product.documentId)
             .update({'stock': FieldValue.increment(-qty)});
       }
       lastInvoiceNumber = invoiceNumber;
@@ -108,6 +140,9 @@ class SalesViewModel extends ChangeNotifier {
       return true;
     } catch (error) {
       debugPrint('Complete Sale Error: $error');
+      debugPrint(
+        'Products: ${currentSale.map((p) => '${p.id} - ${p.productName}').toList()}',
+      );
       return false;
     } finally {
       isProcessingSale = false;

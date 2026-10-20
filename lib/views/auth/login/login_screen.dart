@@ -41,7 +41,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   bool _rememberMe = false;
-  bool _obscurePassword = true;
+  final bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {

@@ -138,6 +138,61 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> logout(BuildContext context) async {
+    try {
+      await auth.signOut();
+
+      // Cancel the user subscription when logging out
+      await userSubscription?.cancel();
+      userSubscription = null;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Logged out successfully'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $error'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
+  Future<Map<String, String>> getUserData() async {
+    final user = auth.currentUser;
+
+    if (user == null) {
+      return {};
+    }
+
+    final document = await firestore.collection('Users').doc(user.uid).get();
+
+    if (!document.exists) {
+      return {};
+    }
+
+    final data = document.data();
+    if (data == null) {
+      return {};
+    }
+
+    return {
+      'email': data['email'] ?? '',
+      'fullName': data['fullName'] ?? '',
+      'storeName': data['storeName'] ?? '',
+      'phone': data['phone'] ?? '',
+    };
+  }
+
   @override
   void dispose() {
     userSubscription?.cancel();

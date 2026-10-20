@@ -97,7 +97,7 @@ class _SalesOverviewState extends State<SalesOverview> {
                 return ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   itemCount: sales.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     return SaleCard(sale: sales[index]);
                   },

@@ -69,7 +69,13 @@ void showAddProductDialog(BuildContext context, {ProductModel? product}) {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const SizedBox(height: 8),
-
+                        // _buildDialogTextField(
+                        //   viewModel.productId,
+                        //   'Product ID',
+                        //   Icons.tag_outlined,
+                        //   validator: AppValidators.username,
+                        // ),
+                        const SizedBox(height: 8),
                         _buildDialogTextField(
                           viewModel.productName,
                           'Product Name',

@@ -7,6 +7,7 @@ import 'package:store_management_system/models/product_model.dart';
 class ProductViewModel extends ChangeNotifier {
   List<ProductModel> productData = [];
 
+  TextEditingController productId = TextEditingController();
   TextEditingController productName = TextEditingController();
   TextEditingController category = TextEditingController();
   TextEditingController price = TextEditingController();
@@ -14,6 +15,11 @@ class ProductViewModel extends ChangeNotifier {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   bool isloading = false;
+  int productNumber = 1001;
+
+  int generateProductId() {
+    return productNumber++;
+  }
 
   Future updateProduct({
     required String productId,
@@ -74,6 +80,7 @@ class ProductViewModel extends ChangeNotifier {
           .collection('Product')
           .doc()
           .set({
+            'id': generateProductId().toString(),
             'productName': productName.text.trim(),
             'category': category.text.trim(),
             'price': double.tryParse(price.text.trim()) ?? 0,

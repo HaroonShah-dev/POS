@@ -56,7 +56,7 @@ class _SalesProductCardState extends State<SalesProductCard> {
                 ? []
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
+                      color: Colors.black.withValues(alpha: 0.03),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -67,8 +67,8 @@ class _SalesProductCardState extends State<SalesProductCard> {
             child: InkWell(
               onTap: widget.onTap,
               borderRadius: BorderRadius.circular(16),
-              splashColor: AppColors.primary.withOpacity(0.12),
-              highlightColor: AppColors.primary.withOpacity(0.06),
+              splashColor: AppColors.primary.withValues(alpha: 0.12),
+              highlightColor: AppColors.primary.withValues(alpha: 0.06),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   // Scale spacing/sizes based on the actual space the grid gave this card
@@ -95,7 +95,7 @@ class _SalesProductCardState extends State<SalesProductCard> {
                               width: iconBoxSize,
                               padding: EdgeInsets.all(isCompact ? 6 : 9),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
+                                color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: FittedBox(
@@ -115,7 +115,7 @@ class _SalesProductCardState extends State<SalesProductCard> {
                                 decoration: BoxDecoration(
                                   color:
                                       (lowStock ? Colors.orange : Colors.green)
-                                          .withOpacity(0.1),
+                                          .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(

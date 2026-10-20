@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:store_management_system/views/dashboard/widgets/DashboardContent/dashboard_content.dart';
 import 'package:store_management_system/views/products/product_screen.dart';
+import 'package:store_management_system/views/reports/report_screen.dart';
 import 'package:store_management_system/views/sales/sales_screen.dart';
 
 class DashboardViewModel extends ChangeNotifier {
@@ -255,7 +256,7 @@ class DashboardViewModel extends ChangeNotifier {
         return Text('Supplier');
 
       case 6:
-        return Text('Reports');
+        return const ReportScreen();
 
       case 7:
         return Text('Settings');

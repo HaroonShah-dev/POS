@@ -159,7 +159,10 @@ class _LineChartPainter extends CustomPainter {
           LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [lineColor.withOpacity(0.22), lineColor.withOpacity(0.0)],
+            colors: [
+              lineColor.withValues(alpha: 0.22),
+              lineColor.withValues(alpha: 0.0),
+            ],
           ).createShader(
             Rect.fromLTWH(leftPadding, topPadding, chartWidth, chartHeight),
           );
@@ -185,7 +188,7 @@ class _LineChartPainter extends CustomPainter {
         canvas.drawCircle(
           point,
           7,
-          Paint()..color = lineColor.withOpacity(0.18),
+          Paint()..color = lineColor.withValues(alpha: 0.18),
         );
         canvas.drawCircle(point, 4.5, Paint()..color = Colors.white);
         canvas.drawCircle(
@@ -228,7 +231,7 @@ class _LineChartPainter extends CustomPainter {
           point,
           3,
           Paint()
-            ..color = lineColor.withOpacity(0.5)
+            ..color = lineColor.withValues(alpha: 0.5)
             ..style = PaintingStyle.stroke
             ..strokeWidth = 2,
         );

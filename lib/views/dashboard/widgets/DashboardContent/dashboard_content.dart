@@ -144,8 +144,6 @@ class _DashboardContentState extends State<DashboardContent> {
               subtitle: 'Your revenue performance over time',
             ),
             const SizedBox(height: 16),
-
-            // Toggle button
             Container(
               height: 300,
               width: double.infinity,
@@ -171,7 +169,7 @@ class _DashboardContentState extends State<DashboardContent> {
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.08),
+                          color: AppColors.primary.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -189,6 +187,8 @@ class _DashboardContentState extends State<DashboardContent> {
                 ],
               ),
             ),
+
+            const SizedBox(height: 36),
             _ToggleDetailsButton(
               isOpen: _showDetails,
               onPressed: () => setState(() => _showDetails = !_showDetails),
@@ -245,7 +245,7 @@ class _ToggleDetailsButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: isOpen
-            ? AppColors.primary.withOpacity(0.10)
+            ? AppColors.primary.withValues(alpha: 0.10)
             : AppColors.primary,
         foregroundColor: isOpen ? AppColors.primary : Colors.white,
         elevation: 0,
@@ -284,7 +284,7 @@ class _SalesStockPanel extends StatelessWidget {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.06),
+            color: AppColors.primary.withValues(alpha: 0.06),
             blurRadius: 28,
             offset: const Offset(0, 12),
           ),
@@ -301,7 +301,7 @@ class _SalesStockPanel extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.10),
+                    color: AppColors.primary.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -454,7 +454,7 @@ class _DetailSection extends StatelessWidget {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: accent.withOpacity(0.12),
+                    color: accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -478,7 +478,7 @@ class _DetailSection extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.08),
+                      color: AppColors.primary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -522,7 +522,7 @@ BoxDecoration _panelDecoration() {
     border: Border.all(color: AppColors.border),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.03),
+        color: Colors.black.withValues(alpha: 0.03),
         blurRadius: 16,
         offset: const Offset(0, 6),
       ),

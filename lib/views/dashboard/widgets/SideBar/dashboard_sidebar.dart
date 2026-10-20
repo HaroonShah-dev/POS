@@ -33,7 +33,7 @@ class DashboardSidebar extends StatelessWidget {
                           color: AppColors.infoBg,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.08),
+                            color: Colors.white.withValues(alpha: 0.08),
                           ),
                         ),
                         child: const Icon(
@@ -139,7 +139,7 @@ class DashboardSidebar extends StatelessWidget {
             ),
 
             // ---------- Logout ----------
-            Divider(height: 1, color: Colors.white.withOpacity(0.08)),
+            Divider(height: 1, color: Colors.white.withValues(alpha: 0.08)),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
               child: Material(
@@ -155,7 +155,7 @@ class DashboardSidebar extends StatelessWidget {
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.red.shade400.withOpacity(0.08),
+                      color: Colors.red.shade400.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(

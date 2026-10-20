@@ -39,6 +39,9 @@ dependencies:
   firebase_auth: ^6.7.0
   firebase_core: ^4.15.0
   thermal_printer_flutter: ^2.1.0
+  pdf: ^3.13.1
+  path_provider: ^2.1.6
+  printing: ^5.15.1
 
 dev_dependencies:
   flutter_test:

@@ -7,8 +7,8 @@ import 'package:store_management_system/views/products/widgets/add_product.dart'
 import '../product_view_model.dart';
 
 class ProductTable extends StatelessWidget {
-  final String selectedCategory;
-  final String selectedFilter;
+  final String? selectedCategory;
+  final String? selectedFilter;
   final String searchText;
 
   const ProductTable({
@@ -24,8 +24,8 @@ class ProductTable extends StatelessWidget {
 
     return StreamBuilder(
       stream: viewModel.getFilteredProducts(
-        selectedCategory: selectedCategory,
-        selectedFilter: selectedFilter,
+        selectedCategory: selectedCategory!,
+        selectedFilter: selectedFilter!,
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -54,7 +54,8 @@ class ProductTable extends StatelessWidget {
 
           if (search.isEmpty) return true;
 
-          return product.productName.toLowerCase().contains(search) ||
+          return product.id.toLowerCase().contains(search) ||
+              product.productName.toLowerCase().contains(search) ||
               product.category.toLowerCase().contains(search);
         }).toList();
 
@@ -88,6 +89,7 @@ class ProductTable extends StatelessWidget {
                   ),
                   dividerThickness: 1,
                   columns: const [
+                    DataColumn(label: Text('ID')),
                     DataColumn(label: Text('Product')),
                     DataColumn(label: Text('Category')),
                     DataColumn(label: Text('Price')),
@@ -100,6 +102,7 @@ class ProductTable extends StatelessWidget {
 
                     return DataRow(
                       cells: [
+                        DataCell(Text(product.id, style: AppTextStyles.h4)),
                         DataCell(
                           ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 200),
@@ -271,7 +274,9 @@ class _StockStatus extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1), // was solid `color` — text was invisible
+        color: color.withValues(
+          alpha: 0.1,
+        ), // was solid `color` — text was invisible
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
