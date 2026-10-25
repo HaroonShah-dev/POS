@@ -14,8 +14,6 @@ class ReportPeriodSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 4 (padding) + 44 (item) + 4 (padding) = 52 = AppDimensions.buttonHeight,
-    // so it lines up with the date button next to it.
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(

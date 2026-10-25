@@ -39,7 +39,7 @@ class ReportDateRangeButton extends StatelessWidget {
       onPressed: () async {
         final picked = await showDateRangePicker(
           context: context,
-          firstDate: DateTime(2020),
+          firstDate: DateTime(2021),
           lastDate: DateTime.now(),
           initialDateRange: range,
         );

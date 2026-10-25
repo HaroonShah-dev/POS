@@ -19,14 +19,14 @@ Future<Uint8List> _makePdf({
   required List<SaleModel> sales,
   required String managerName,
   required String storeAddress,
+  required DateTimeRange range,
 }) async {
   final doc = pw.Document();
 
   doc.addPage(
     pw.MultiPage(
-      margin: const pw.EdgeInsets.all(12),
+      margin: const pw.EdgeInsets.all(10),
 
-      // Header har page par repeat hoga.
       header: (context) {
         return pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -42,14 +42,14 @@ Future<Uint8List> _makePdf({
             ),
             pw.pdfInfo(
               leftText: 'Selected Report Type That You Selected',
-              rightText: 'Weekly',
+              rightText:
+                  'Report Range: ${range.start.toString().split(' ')[0]} - ${range.end.toString().split(' ')[0]}',
             ),
             pw.Divider(color: PdfColors.black, thickness: 1),
           ],
         );
       },
 
-      // Footer mein page number show hoga.
       footer: (context) {
         return pw.Container(
           alignment: pw.Alignment.centerRight,
@@ -72,15 +72,18 @@ Future<Uint8List> _makePdf({
 
         pw.pdfInfo(
           leftText: 'Manager: $managerName',
-          rightText: 'Reporting Period: Daily, Weekly, Monthly, Yearly',
+          rightText: 'Report Range: daily, weekly, monthly, quarterly, yearly, custom range',
         ),
 
         pw.Divider(color: PdfColors.black, thickness: 1),
+        pw.Text(
+          'Report Summary',
+          style: const pw.TextStyle(
+            fontSize: 14,
+            fontWeight: pw.FontWeight.bold,
+          ),
+        ),
 
-        // pw.Text(
-        //   'Report Summary: This report provides an overview of the store\'s performance and operations, including sales, inventory, and customer data.',
-        //   style: const pw.TextStyle(fontSize: 12),
-        // ),
         pw.SizedBox(height: 12),
 
         // Sales table
@@ -97,6 +100,7 @@ void previewPdf(
   required List<SaleModel> sales,
   required String managerName,
   required String storeAddress,
+  required DateTimeRange range,
 }) {
   Navigator.push(
     context,
@@ -108,6 +112,7 @@ void previewPdf(
             sales: sales,
             managerName: managerName,
             storeAddress: storeAddress,
+            range: range,
           ),
           canChangePageFormat: false,
           canChangeOrientation: false,
@@ -121,8 +126,11 @@ Future<String> savePdf({
   required List<SaleModel> sales,
   required String managerName,
   required String storeAddress,
+  DateTimeRange<DateTime>? range,
+  //required DateTimeRange range,
 }) async {
   final bytes = await _makePdf(
+    range: range!,
     sales: sales,
     managerName: managerName,
     storeAddress: storeAddress,

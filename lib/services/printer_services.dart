@@ -4,14 +4,10 @@ import 'package:thermal_printer_flutter/thermal_printer_flutter.dart';
 class PrinterService {
   final ThermalPrinterFlutter _printer = ThermalPrinterFlutter();
 
-  /// Lists USB printers visible to the Windows print spooler.
-  /// The printer must already be installed as a Windows printer
-  /// (Settings > Printers & Scanners) for it to show up here.
   Future<List<Printer>> getUsbPrinters() async {
     return await _printer.getPrinters(printerType: PrinterType.usb);
   }
 
-  /// Virtual printers ko chhod kar asli thermal printer chunta hai.
   Printer? pickThermal(List<Printer> devices) {
     const virtual = [
       'onenote',
@@ -33,21 +29,17 @@ class PrinterService {
     ];
 
     final real = devices.where((d) {
-      final n = (d.name ?? '').toLowerCase();
+      final n = (d.name).toLowerCase();
       return !virtual.any(n.contains);
     }).toList();
 
-    // Pehle naam se thermal dhoondein
     for (final d in real) {
-      final n = (d.name ?? '').toLowerCase();
+      final n = (d.name).toLowerCase();
       if (thermalHints.any(n.contains)) return d;
     }
-    // Warna pehla asli printer
     return real.isNotEmpty ? real.first : null;
   }
 
-  /// Builds the receipt and sends it to the given printer.
-  /// USB is connectionless in this package, so no connect() step is needed.
   Future<void> printSale({
     required Printer target,
     required String storeName,
@@ -61,7 +53,6 @@ class PrinterService {
 
     List<int> bytes = [];
 
-    // Store name, big and bold, centered
     bytes += generator.text(
       storeName,
       styles: const PosStyles(
@@ -86,8 +77,6 @@ class PrinterService {
 
     bytes += generator.hr(ch: '-');
 
-    // One row per item: name on the left, subtotal on the right,
-    // with a smaller line underneath showing qty x unit price
     for (final product in items) {
       final qty = quantities[product.id] ?? 1;
 
@@ -105,7 +94,6 @@ class PrinterService {
 
     bytes += generator.hr(ch: '-');
 
-    // Total row, bigger and bold
     bytes += generator.row([
       PosColumn(
         text: 'Total',

@@ -50,7 +50,7 @@ class DashboardSidebar extends StatelessWidget {
                             Text(
                               authViewModel.userStoreName ?? 'Store Manager',
                               maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                              overflow: TextOverflow.fade,
                               style: AppTextStyles.button,
                             ),
                             const SizedBox(height: 3),

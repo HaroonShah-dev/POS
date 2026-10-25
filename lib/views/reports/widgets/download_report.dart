@@ -6,7 +6,8 @@ import 'package:store_management_system/views/auth/authViewModel/auth_view_model
 import 'package:store_management_system/views/sales/sales_view_model.dart';
 
 class DownloadReport extends StatefulWidget {
-  const DownloadReport({super.key});
+  final DateTimeRange? range;
+  const DownloadReport({super.key, required this.range});
 
   @override
   State<DownloadReport> createState() => _DownloadReportState();
@@ -15,24 +16,66 @@ class DownloadReport extends StatefulWidget {
 class _DownloadReportState extends State<DownloadReport> {
   bool _isGenerating = false;
 
+  bool _isPreviewing = false;
+  void _toast(String message, {required Color color, required IconData icon}) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          content: Row(
+            children: [
+              Icon(icon, color: Colors.white, size: 20),
+              const SizedBox(width: 10),
+              Expanded(child: Text(message)),
+            ],
+          ),
+        ),
+      );
+  }
+
   Future<void> _generateReport({required bool preview}) async {
     if (_isGenerating) return;
-
-    setState(() => _isGenerating = true);
+    setState(() {
+      _isGenerating = true;
+      _isPreviewing = preview;
+    });
 
     try {
       final authViewModel = context.read<AuthViewModel>();
       final salesViewModel = context.read<SalesViewModel>();
 
-      final results = await Future.wait([
-        salesViewModel.sales().first,
-        authViewModel.getUserData(),
-      ]);
+      final now = DateTime.now();
+      final range = widget.range ?? DateTimeRange(start: now, end: now);
 
-      final sales = results[0] as dynamic;
-      final userInfo = results[1] as Map<String, dynamic>;
+      final start = DateTime(
+        range.start.year,
+        range.start.month,
+        range.start.day,
+      );
+
+      final end = DateTime(range.end.year, range.end.month, range.end.day + 1);
+
+      final salesFuture = salesViewModel.listenSalesBetween(start, end).first;
+      final userFuture = authViewModel.getUserData();
+
+      final sales = await salesFuture;
+      final userInfo = await userFuture;
 
       if (!mounted) return;
+
+      if (sales.isEmpty) {
+        _toast(
+          'No sales found for the selected dates',
+          color: AppColors.warning,
+          icon: Icons.info_outline_rounded,
+        );
+        return;
+      }
 
       final managerName = userInfo['fullName']?.toString() ?? 'Not available';
       final storeAddress = userInfo['storeName']?.toString() ?? 'Not available';
@@ -43,154 +86,149 @@ class _DownloadReportState extends State<DownloadReport> {
           sales: sales,
           managerName: managerName,
           storeAddress: storeAddress,
+          range: range,
         );
       } else {
         final filePath = await savePdf(
           sales: sales,
           managerName: managerName,
           storeAddress: storeAddress,
+          range: widget.range,
         );
 
         if (!mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Report saved: $filePath'),
-            backgroundColor: AppColors.success,
-            behavior: SnackBarBehavior.floating,
-          ),
+        _toast(
+          'Report saved: $filePath',
+          color: AppColors.success,
+          icon: Icons.check_circle_outline_rounded,
         );
       }
     } catch (error) {
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Unable to generate report: $error'),
-          behavior: SnackBarBehavior.floating,
-        ),
+      _toast(
+        'Unable to generate report: $error',
+        color: Theme.of(context).colorScheme.error,
+        icon: Icons.error_outline_rounded,
       );
     } finally {
-      if (mounted) {
-        setState(() => _isGenerating = false);
-      }
+      if (mounted) setState(() => _isGenerating = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primaryColor = theme.colorScheme.primary;
+    final primary = theme.colorScheme.primary;
+    final onPrimary = theme.colorScheme.onPrimary;
 
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.35)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(11),
-                decoration: BoxDecoration(
-                  color: primaryColor.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.picture_as_pdf_rounded,
-                  color: primaryColor,
-                  size: 26,
-                ),
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    );
+    const padding = EdgeInsets.symmetric(horizontal: 18, vertical: 14);
+    const minSize = Size(0, 46);
+
+    final downloading = _isGenerating && !_isPreviewing;
+    final previewing = _isGenerating && _isPreviewing;
+
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        // ---------- Preview ----------
+        Tooltip(
+          message: 'Open a preview of the report',
+          child: OutlinedButton.icon(
+            onPressed: _isGenerating
+                ? null
+                : () => _generateReport(preview: true),
+            icon: _ButtonIcon(
+              loading: previewing,
+              icon: Icons.visibility_outlined,
+              color: primary,
+            ),
+            label: Text(previewing ? 'Preparing...' : 'Preview'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: primary,
+              minimumSize: minSize,
+              padding: padding,
+              shape: shape,
+              side: BorderSide(
+                color: _isGenerating
+                    ? primary.withValues(alpha: 0.2)
+                    : primary.withValues(alpha: 0.5),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Sales Report',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Generate and export your report',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.65,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _isGenerating
-                  ? null
-                  : () => _generateReport(preview: false),
-              icon: _isGenerating
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(Icons.download_rounded),
-              label: Text(
-                _isGenerating ? 'Generating Report...' : 'Download PDF',
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: primaryColor.withValues(alpha: 0.55),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.2,
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: _isGenerating
-                  ? null
-                  : () => _generateReport(preview: true),
-              icon: const Icon(Icons.visibility_outlined),
-              label: const Text('Preview Report'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: primaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                side: BorderSide(color: primaryColor.withValues(alpha: 0.5)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+        ),
+
+        // ---------- Download ----------
+        Tooltip(
+          message: 'Save the report as a PDF',
+          child: FilledButton.icon(
+            onPressed: _isGenerating
+                ? null
+                : () => _generateReport(preview: false),
+            icon: _ButtonIcon(
+              loading: downloading,
+              icon: Icons.download_rounded,
+              color: onPrimary,
+            ),
+            label: Text(downloading ? 'Generating...' : 'Download PDF'),
+            style: FilledButton.styleFrom(
+              backgroundColor: primary,
+              foregroundColor: onPrimary,
+              disabledBackgroundColor: primary.withValues(alpha: 0.45),
+              disabledForegroundColor: onPrimary.withValues(alpha: 0.9),
+              minimumSize: minSize,
+              padding: padding,
+              shape: shape,
+              elevation: 0,
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.2,
               ),
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Icon that cross-fades into a small spinner while loading.
+class _ButtonIcon extends StatelessWidget {
+  final bool loading;
+  final IconData icon;
+  final Color color;
+  const _ButtonIcon({
+    required this.loading,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 20,
+      height: 20,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        child: loading
+            ? Padding(
+                key: const ValueKey('spinner'),
+                padding: const EdgeInsets.all(2),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.2,
+                  color: color,
+                ),
+              )
+            : Icon(icon, key: const ValueKey('icon'), size: 20),
       ),
     );
   }
